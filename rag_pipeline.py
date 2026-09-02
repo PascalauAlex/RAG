@@ -97,10 +97,11 @@ def demo_basic_rag():
     def format_docs(docs):
         return "\n\n".join([doc.page_content for doc in docs])
 
+    # RAG chain
     rag_chain = (
-        {"context" : retriever | format_docs, "question":RunnablePassthrough()}
-        | prompt
-        | llm
+        {"context" : retriever | format_docs, "question":RunnablePassthrough()} # RunnablePassthrou passes the user question through without changing anything
+        | prompt # Everything is fed to the prompt
+        | llm    # Than fed to the LLM
         | StrOutputParser()
     )
 
