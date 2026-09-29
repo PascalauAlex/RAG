@@ -4,9 +4,7 @@ Reducing LLM costs in production
 """
 
 import hashlib
-import json
 from typing import Optional, Callable
-from functools import lru_cache
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langsmith import traceable
@@ -30,21 +28,20 @@ class ModelRouter:
 
         prompt = ChatPromptTemplate.from_template(
             """
-Classify this query's complexity as 'simple' or 'complex'.
+            Classify this query's complexity as 'simple' or 'complex'.
+            Simple: Basic facts, short answers, simple calculations.
+            Complex: Analysis, reasoning, creative tasks, multi-step problems.
 
-Simple: Basic facts, short answers, simple calculations
-Complex: Analysis, reasoning, creative tasks, multi-step problems
+            Query: {query}
 
-Query: {query}
-
-Respond with only: simple or complex
+            Respond with only: simple or complex
 """
         )
 
         response = self.classifier.invoke(prompt.format(query=query))
         return response.content.strip().lower()
 
-    @traceable(name="routed_query")
+    @traceable(name="routed_query") # LangSmith
     def invoke(self, query: str) -> tuple[str, str, float]:
         """
         Route and invoke query.

@@ -9,7 +9,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 #     model="gpt-4o-mini",
 #     messages=[
 #         {"role":"system", "content":"You are a helpful assistant."},
-#         {"role":"user", "content":"What is the capital of france?"}
+#         {"role":"user", "content":"What is the capital of France?"}
 #     ]
 # )
 #
