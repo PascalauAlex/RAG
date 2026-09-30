@@ -1,3 +1,4 @@
+from distro import distro_release_attr
 from langchain_openai.embeddings import OpenAIEmbeddings
 from dotenv import load_dotenv
 import numpy as np
@@ -53,8 +54,36 @@ def similarity_search():
     for doc, score in ranked_docs:
         print(f"  {score:.4f}: {doc}")
 
+# Caching
+def embedding_caching():
+    from langchain_classic.embeddings import CacheBackedEmbeddings
+    from langchain_classic.storage import LocalFileStore
+    import tempfile
+    with tempfile.TemporaryDirectory() as tempdir:
+        store = LocalFileStore(tempdir)
+
+        cached_embeddings = CacheBackedEmbeddings.from_bytes_store(
+            underlying_embeddings=embeddings_model,
+            document_embedding_cache=store,
+            namespace="exercise"
+        )
+        text = "What is Reinforcement Learning?"
+
+        print("First call (API):")
+        vectors1 = cached_embeddings.embed_documents([text])
+        print(f" Embedded {len(vectors1)} documents")
+
+        #Second call -from cache
+        print("\nSecond call (Cache):")
+        vectors2 = cached_embeddings.embed_documents([text])
+        print(f" Embedded {len(vectors2)} documents")
+
+        # Verify same results
+        print(f"\nSame vectors : {np.allclose(vectors1[0],vectors2[0])}")
+
 
 
 
 if __name__ == "__main__":
-    similarity_search()
+    # similarity_search()
+    embedding_caching()
